@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChangeWise</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg"><meta name="theme-color" content="#0f766e">
+<style>
+:root{--bg:#eef3f2;--cd:#fff;--tx:#10201d;--mu:#55706a;--ac:#0f766e;--on:#fff;--bd:#cbdad6;--wr:#b42318;--am:#a15c07;--ok:#0f766e;--pn:#0f766e}
+:root[data-t=dark]{--bg:#0b1312;--cd:#14201e;--tx:#e8f1ef;--mu:#9bb0aa;--ac:#2dd4bf;--on:#03211d;--bd:#2a3b38;--wr:#fda29b;--am:#fec84b;--ok:#e8f1ef;--pn:#0d4f49}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding-bottom:84px}
+header,main{max-width:560px;margin:auto;padding:12px 16px 4px}
+h1{margin:0;font-size:22px;letter-spacing:-.3px}
+#st{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:99px;font-size:13px;background:var(--cd);border:1px solid var(--bd)}
+#st.am{color:var(--am)}
+section{display:none;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:16px}
+section.on{display:block}
+h2{margin:0 0 4px;font-size:19px}
+label{display:block;margin:14px 0 4px;color:var(--mu);font-size:14px;font-weight:600}
+input,select{width:100%;padding:12px;font:inherit;font-size:19px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+input[type=checkbox]{width:22px;height:22px;vertical-align:middle;margin-right:8px}
+.row{display:flex;gap:8px}.row>:first-child{flex:2}.row .cur{flex:1;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+button{font:inherit;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:10px 14px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ac);outline-offset:1px}
+.pri{background:var(--ac);color:var(--on);border-color:var(--ac);font-weight:700;flex:2}.sec{flex:1}
+.acts{display:flex;gap:8px;margin-top:16px}
+.res{margin-top:14px}
+.till{background:var(--pn);color:#fff;border-radius:12px;padding:16px;text-align:right}
+.till .big{color:#fff}
+.big{font-size:42px;font-weight:800;line-height:1.1;margin:4px 0;word-break:break-word}
+.sm{font-size:14px;color:var(--mu);margin-top:6px}
+.till .sm{color:#d3efe9}.wr{color:var(--wr)!important}.am{color:var(--am)}
+.rr{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)}
+.hint{font-size:14px;color:var(--mu);margin:4px 0 0}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;border-radius:0;background:none;padding:15px 4px;font-size:15px;color:var(--mu)}
+nav button.on{color:var(--ac);font-weight:800}
+.nt{background:var(--cd);border:2px solid var(--am);border-radius:12px;padding:12px;margin-bottom:10px}.nt[hidden]{display:none}.nt button{margin:8px 8px 0 0}
+.lk{display:inline-block;padding:10px 14px;border:1px solid var(--bd);border-radius:10px;color:var(--ac);text-decoration:none;margin:6px 6px 0 0}
+details{margin-top:10px}summary{cursor:pointer;color:var(--ac)}footer a{color:var(--ac)}
+</style></head><body>
+<header><h1>ChangeWise</h1><span id="st">Starting…</span></header>
+<main>
+<div id="nt" class="nt" hidden></div>
+<section id="v-change"><h2>Change calculator</h2>
+<label for="cost">Product cost</label><div class="row"><input id="cost" inputmode="decimal" placeholder="0.00" autocomplete="off"><input class="cur" id="cc" list="cl" autocomplete="off" aria-label="Cost currency"></div><div class="chips" id="cch"></div>
+<label for="paid">Customer paid</label><div class="row"><input id="paid" inputmode="decimal" placeholder="0.00" autocomplete="off"><input class="cur" id="pc" list="cl" autocomplete="off" aria-label="Payment currency"></div><div class="chips" id="pch"></div>
+<div class="chips" id="qk"></div>
+<div class="acts"><button class="pri" id="calc">Calculate change</button><button class="sec" id="clr">Clear</button></div>
+<div class="res" id="res"></div></section>
+
+<section id="v-conv"><h2>Currency converter</h2>
+<label for="ca">Amount</label><input id="ca" inputmode="decimal" placeholder="0.00" autocomplete="off">
+<label for="cf">From (type a code or name)</label><input class="cur" id="cf" list="cl" autocomplete="off">
+<div class="acts"><button class="sec" id="sw">Swap</button></div>
+<label for="ct">To</label><input class="cur" id="ct" list="cl" autocomplete="off">
+<div class="res" id="cr"></div></section>
+
+<section id="v-rates"><h2>Exchange rates</h2><p class="hint" id="rh"></p>
+<label for="q">Search by name or code</label><input id="q" placeholder="e.g. rand or ZAR" autocomplete="off">
+<div id="rl"></div></section>
+
+<section id="v-my"><h2>My rates</h2><p class="hint">Rates you set yourself, such as your shop rate. They always win over reference rates and are always marked as yours.</p><div id="ml"></div>
+<label for="mf">Add a rate: 1 unit of</label><input class="cur" id="mf" list="cl" autocomplete="off">
+<label for="mt">equals how many of</label><input class="cur" id="mt" list="cl" autocomplete="off">
+<label for="mr">Rate</label><input id="mr" inputmode="decimal" placeholder="e.g. 40" autocomplete="off">
+<div class="acts"><button class="pri" id="msave">Save my rate</button></div><div class="sm" id="mg"></div></section>
+
+<section id="v-set"><h2 id="sht">Settings</h2><p class="hint" id="wl"></p>
+<label for="sc">Your country</label><select id="sc"></select>
+<label for="sm">Main currency</label><input class="cur" id="sm" list="cl" autocomplete="off">
+<label><input type="checkbox" id="su">Also show USD as a quick currency</label>
+<div id="cw"><label for="sr" id="srl"></label><input id="sr" inputmode="decimal" placeholder="Leave empty to use reference rates" autocomplete="off"><p class="hint">Your shop rate between USD and your main currency. Add more pairs in the My rates tab.</p></div>
+<label for="sd">Round change to nearest</label><select id="sd"><option value="1">Exact (smallest coin)</option><option value="5">5 smallest units</option><option value="10">10 smallest units</option><option value="50">50 smallest units</option></select>
+<label for="sh">Theme</label><select id="sh"><option value="auto">Match my phone</option><option value="light">Light</option><option value="dark">Dark</option></select>
+<div class="acts"><button class="pri" id="save">Save settings</button><button class="sec" id="upd">Update rates</button></div>
+<div class="sm" id="sg"></div><div class="acts"><button class="sec" id="cmr">Forget rates I typed</button></div></section>
+</main>
+<footer class="sm" style="max-width:560px;margin:8px auto;padding:0 16px">Rates from <a href="https://frankfurter.dev">Frankfurter</a>, backup: <a href="https://www.exchangerate-api.com">Rates By Exchange Rate API</a>. These are reference rates, not live market quotes. Your own rates are always marked.</footer>
+<datalist id="cl"></datalist>
+<nav id="nv"></nav>
+<script>
+const $=s=>document.querySelector(s),LS=localStorage;
+const ld=(k,d)=>{try{return JSON.parse(LS.getItem(k))??d}catch{return d}},sv=(k,v)=>{try{LS.setItem(k,JSON.stringify(v))}catch{}};
+const FB='AD:EUR|AE:AED|AF:AFN|AG:XCD|AI:XCD|AL:ALL|AM:AMD|AO:AOA|AR:ARS|AS:USD|AT:EUR|AU:AUD|AW:AWG|AX:EUR|AZ:AZN|BA:BAM|BB:BBD|BD:BDT|BE:EUR|BF:XOF|BG:EUR|BH:BHD|BI:BIF|BJ:XOF|BL:EUR|BM:BMD|BN:BND|BO:BOB|BQ:USD|BR:BRL|BS:BSD|BT:BTN|BV:NOK|BW:BWP|BY:BYN|BZ:BZD|CA:CAD|CC:AUD|CD:CDF|CF:XAF|CG:XAF|CH:CHF|CI:XOF|CK:NZD|CL:CLP|CM:XAF|CN:CNY|CO:COP|CR:CRC|CU:CUP|CV:CVE|CW:ANG|CX:AUD|CY:EUR|CZ:CZK|DE:EUR|DJ:DJF|DK:DKK|DM:XCD|DO:DOP|DZ:DZD|EC:USD|EE:EUR|EG:EGP|EH:MAD|ER:ERN|ES:EUR|ET:ETB|FI:EUR|FJ:FJD|FK:FKP|FM:USD|FO:DKK|FR:EUR|GA:XAF|GB:GBP|GD:XCD|GE:GEL|GF:EUR|GG:GBP|GH:GHS|GI:GIP|GL:DKK|GM:GMD|GN:GNF|GP:EUR|GQ:XAF|GR:EUR|GS:GBP|GT:GTQ|GU:USD|GW:XOF|GY:GYD|HK:HKD|HM:AUD|HN:HNL|HR:EUR|HT:HTG|HU:HUF|ID:IDR|IE:EUR|IL:ILS|IM:GBP|IN:INR|IO:USD|IQ:IQD|IR:IRR|IS:ISK|IT:EUR|JE:GBP|JM:JMD|JO:JOD|JP:JPY|KE:KES|KG:KGS|KH:KHR|KI:AUD|KM:KMF|KN:XCD|KP:KPW|KR:KRW|KW:KWD|KY:KYD|KZ:KZT|LA:LAK|LB:LBP|LC:XCD|LI:CHF|LK:LKR|LR:LRD|LS:LSL,ZAR|LT:EUR|LU:EUR|LV:EUR|LY:LYD|MA:MAD|MC:EUR|MD:MDL|ME:EUR|MF:EUR|MG:MGA|MH:USD|MK:MKD|ML:XOF|MM:MMK|MN:MNT|MO:MOP|MP:USD|MQ:EUR|MR:MRU|MS:XCD|MT:EUR|MU:MUR|MV:MVR|MW:MWK|MX:MXN|MY:MYR|MZ:MZN|NA:NAD,ZAR|NC:XPF|NE:XOF|NF:AUD|NG:NGN|NI:NIO|NL:EUR|NO:NOK|NP:NPR|NR:AUD|NU:NZD|NZ:NZD|OM:OMR|PA:PAB,USD|PE:PEN|PF:XPF|PG:PGK|PH:PHP|PK:PKR|PL:PLN|PM:EUR|PN:NZD|PR:USD|PS:ILS|PT:EUR|PW:USD|PY:PYG|QA:QAR|RE:EUR|RO:RON|RS:RSD|RU:RUB|RW:RWF|SA:SAR|SB:SBD|SC:SCR|SD:SDG|SE:SEK|SG:SGD|SH:SHP|SI:EUR|SJ:NOK|SK:EUR|SL:SLE|SM:EUR|SN:XOF|SO:SOS|SR:SRD|SS:SSP|ST:STN|SV:USD|SX:ANG|SY:SYP|SZ:SZL|TC:USD|TD:XAF|TF:EUR|TG:XOF|TH:THB|TJ:TJS|TK:NZD|TL:USD|TM:TMT|TN:TND|TO:TOP|TR:TRY|TT:TTD|TV:AUD|TW:TWD|TZ:TZS|UA:UAH|UG:UGX|UM:USD|US:USD|UY:UYU|UZ:UZS|VA:EUR|VC:XCD|VE:VES|VG:USD|VI:USD|VN:VND|VU:VUV|WF:XPF|WS:WST|XK:EUR|YE:YER|YT:EUR|ZA:ZAR|ZM:ZMW|ZW:ZWG,USD';
+const FX=[{"o":"ZWL","n":"ZWG","w":"Zimbabwe","y":2024,"d":"2024-04-08","e":"2024-04-29","r":2498.7242},{"o":"BGN","n":"EUR","w":"Bulgaria","y":2026,"d":"2026-01-01","e":"2026-01-31","r":1.95583},{"o":"HRK","n":"EUR","w":"Croatia","y":2023,"d":"2023-01-01","e":"2023-01-14","r":7.5345},{"o":"SLL","n":"SLE","w":"Sierra Leone","y":2022,"r":1000},{"o":"MRO","n":"MRU","w":"Mauritania","y":2018,"d":"2018-01-01","r":10},{"o":"STD","n":"STN","w":"Sao Tome and Principe","y":2018,"d":"2018-01-01","r":1000},{"o":"ZMK","n":"ZMW","w":"Zambia","y":2013,"d":"2013-01-01","r":1000}];
+let G=ld('cw_geo',{c:FB,x:FX}),RN,GONE=false;try{RN=new Intl.DisplayNames(['en'],{type:'region'})}catch{}
+const geo=()=>Object.fromEntries(G.c.split('|').map(e=>{const[k,v]=e.split(':');return[k,v.split(',')]}));
+const cname=k=>{try{return RN.of(k)||k}catch{return k}};
+async function loadGeo(){try{const r=await fetch('countries.json',{cache:'no-cache'});if(!r.ok)return;const j=await r.json();if(j&&j.c&&j.c.length>500){G=j;sv('cw_geo',j);setUI();notice()}}catch{}}
+// Currency-change notices: driven by countries.json, so a change needs only a file update, not new app code.
+function applyMain(a){S.main=a;sv('cw_set',S);fill();reset();calc();conv();list();setUI();notice()}
+function notice(){const n=$('#nt'),dis=ld('cw_dis',{}),x=G.x||FX,g=geo()[S.country],m=S.main,ch=x.find(e=>e.o===m&&inScope(e)&&live(e)),pl=x.find(e=>e.o===m&&inScope(e)&&!live(e));let h='',a=null;
+if(ch){h='<b>'+m+' has been replaced by '+ch.n+'</b> ('+ch.w+', '+ch.y+'). Switch your main currency to '+ch.n+'?'+(ch.e&&ch.e>=tod()?' Both '+m+' and '+ch.n+' are accepted until '+ch.e+'.':'')+(ch.r?' Official rate: 1 '+ch.n+' = '+ch.r+' '+m+'.':'');a=ch.n}
+else if(pl){h='<b>Heads-up: '+pl.w+' will replace '+m+' with '+pl.n+' on '+pl.d+'</b> (in '+Math.max(1,Math.ceil((Date.parse(pl.d)-Date.now())/864e5))+' days). Nothing changes until then.'+(pl.r?' Official rate: 1 '+pl.n+' = '+pl.r+' '+m+'. You can already convert between them in the Convert tab.':'')}
+else if(g&&!g.includes(m)){h='<b>'+cname(S.country)+' now uses '+g[0]+'</b>, but your main currency is '+m+'. Switch to '+g[0]+'?';a=g[0]}
+else if(GONE)h='<b>'+m+' is no longer in the rate list.</b> Your country may have changed its money. In Settings, pick the new currency, or enter your own rate against USD.';
+else if(BIG.length)h='<b>Big rate change:</b> '+BIG.slice(0,5).join(', ')+' since the last update. Check before using, or set your own rate in My rates.';
+const key=h.slice(0,70);if(!h||dis[key]){n.hidden=true;return}
+n.hidden=false;n.innerHTML='<div>'+h+'</div>';
+const mk=(t,f)=>{const b=document.createElement('button');b.textContent=t;b.onclick=f;n.append(b)};
+if(a)mk('Switch to '+a,()=>applyMain(a));
+mk('Not now',()=>{dis[key]=1;sv('cw_dis',dis);notice()})}
+const SKIP=/^(XAU|XAG|XPT|XPD|XDR|XXX)$/;
+const first=!ld('cw_set',null);
+let S=Object.assign({main:'USD',usd:true,round:1,theme:'auto',country:''},ld('cw_set',{}));
+// Starter rates (real Frankfurter data, 12 Nov 2026) so the app works on first open. Replaced by fresh rates as soon as the phone is online.
+const ST={at:Date.UTC(2026,10,12,9,0),s:1,rates:{BWP:{r:13.567,d:'2026-11-12'},CNY:{r:6.6647,d:'2026-11-12'},EUR:{r:0.8963,d:'2026-11-12'},GBP:{r:0.74917,d:'2026-11-12'},INR:{r:93.74,d:'2026-11-12'},JPY:{r:158.97,d:'2026-11-12'},KES:{r:129.85,d:'2026-11-12'},NGN:{r:1348.82,d:'2026-11-12'},ZAR:{r:16.4947,d:'2026-11-12'},ZWG:{r:26.581,d:'2026-11-11'}}};
+let R=ld('cw_rates',null)||ST,MR=ld('cw_man',{}),err='',NM;
+if(S.custom&&+S.custom>0&&S.src==='custom'&&S.main!=='USD'&&!MR['USD>'+S.main]){MR['USD>'+S.main]={k:+S.custom,at:Date.now()};sv('cw_man',MR)}delete S.src;delete S.custom;
+try{NM=new Intl.DisplayNames(['en'],{type:'currency'})}catch{}
+const name=c=>{try{return NM.of(c)||c}catch{return c}};
+const dec=c=>{try{return new Intl.NumberFormat('en',{style:'currency',currency:c}).resolvedOptions().maximumFractionDigits}catch{return 2}};
+const fmt=(m,c)=>{const d=dec(c);return new Intl.NumberFormat(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}).format(m/10**d)+' '+c};
+// Money is typed as text and turned into whole minor units (cents) so no decimal errors can creep in.
+const toMinor=(s,c)=>{s=String(s).replace(/[\s,]/g,'');if(!/^(\d+\.?\d*|\.\d+)$/.test(s))return null;const[a,b='']=s.split('.'),d=dec(c);if(b.length>d||a.length>12)return null;return Number(a||0)*10**d+Number(b.padEnd(d,'0')||0)};
+const rowHtml=(a,b)=>d('1 '+a+' = how many '+b+'?')+'<div class="row"><input inputmode="decimal" placeholder="e.g. 26.5" autocomplete="off"><button class="pri" onclick="saveMan(\''+a+'\',\''+b+'\',this)">Use this rate</button></div>';
+const myBox=(a,b)=>'<details><summary class="sm">Not the rate you use? Set your own for '+a+' to '+b+'</summary>'+rowHtml(a,b)+d('Saved on your phone and always marked as your own rate.')+'</details>';
+const noRate=(a,b)=>d('No rate for '+a+' to '+b+' yet.'+(navigator.onLine?'':' You are offline: switch on mobile data or Wi-Fi first.')+(err?' Last try failed: '+err+'.':''),'wr')
++'<div class="acts"><button class="pri" onclick="refresh()">Get rates now</button></div>'
++d('Or look the rate up yourself, then type it below:')
++'<a class="lk" target="_blank" rel="noopener" href="https://www.google.com/search?q=1+'+a+'+to+'+b+'">Search on Google</a><a class="lk" target="_blank" rel="noopener" href="https://www.xe.com/currencyconverter/convert/?Amount=1&From='+a+'&To='+b+'">Open XE.com</a>'
++(a==='ZWG'||b==='ZWG'?'<a class="lk" target="_blank" rel="noopener" href="https://zimrate.statotec.com">ZimRate (RBZ)</a>':'')
++rowHtml(a,b)
++d('Saved on your phone and marked as typed by you, so it is never mistaken for a live rate.');
+function saveMan(a,b,btn){const i=btn.parentNode.querySelector('input'),v=parseFloat(i.value.replace(',','.'));if(!(v>0&&isFinite(v))){i.style.borderColor='var(--wr)';i.value='';i.placeholder='Enter a number above 0';return}delete MR[b+'>'+a];MR[a+'>'+b]={k:v,at:Date.now()};sv('cw_man',MR);calc();conv();list();myList()}
+const rt=k=>k>=100?k.toFixed(2):k>=1?k.toFixed(4):k.toPrecision(4);
+const d=(t,c)=>'<div class="sm '+(c||'')+'">'+t+'</div>';
+const codes=()=>[...new Set(['USD',S.main,...(G.x||FX).filter(e=>e.r).map(e=>e.o),...(R?Object.keys(R.rates):[])])].filter(c=>!SKIP.test(c)).sort();
+const md=()=>R?Object.values(R.rates).reduce((a,x)=>x.d>a?x.d:a,''):'';
+const dt=t=>new Date(t).toLocaleDateString([],{dateStyle:'medium'});
+const MRk=(a,b)=>{const m=MR[a+'>'+b],n=MR[b+'>'+a];return m?m.k:n?1/n.k:null};
+const rate=c=>{if(c==='USD')return{r:1,d:md()};const k=MRk('USD',c);if(k)return{r:k,c:1};const x=R&&R.rates[c];if(x)return{r:x.r,d:x.d,s:x.s};const e=R&&(G.x||FX).find(e=>e.r&&(e.n===c&&R.rates[e.o]||e.o===c&&R.rates[e.n]));if(!e)return null;return e.n===c?{r:R.rates[e.o].r/e.r,d:R.rates[e.o].d,s:'x'}:{r:R.rates[e.n].r*e.r,d:R.rates[e.n].d,s:'x'}};
+const pair=(a,b)=>{const k=MRk(a,b);if(k)return{k,my:1,t:(MR[a+'>'+b]||MR[b+'>'+a]).at};const fx=(G.x||FX).find(e=>e.r&&(e.o===a&&e.n===b||e.o===b&&e.n===a));if(fx)return{k:a===fx.o?1/fx.r:fx.r,fixed:fx.w};const x=rate(a),y=rate(b);if(!x||!y)return null;return{k:y.r/x.r,custom:x.c||y.c,mix:!!x.c!==!!y.c&&(x.c?b:a)!=='USD',d:[x.d,y.d].filter(Boolean).sort()[0],bk:x.s==='b'||y.s==='b',dv:x.s==='x'||y.s==='x'}};
+const src=q=>q.my?'Rate source: your own rate, set on '+dt(q.t):q.fixed?'Rate source: official fixed changeover rate set by '+q.fixed+' (not a market rate)':q.mix?'Rate source: your own rate combined with reference rates':q.custom?'Rate source: your own rates':q.dv?'Rate source: reference rate, converted through the official changeover rate':'Rate source: '+(q.bk?'backup provider (ExchangeRate-API)':'Frankfurter reference rates')+(q.d?', rate date '+q.d:'');
+const old=()=>R&&(Date.now()-R.at)/36e5>36?'Warning: these rates are old. Connect to the internet to update.':'';
+const days=s=>Math.floor((Date.now()-Date.parse(s))/864e5);
+const tod=()=>new Date().toISOString().slice(0,10),live=e=>!e.d||e.d<=tod(),inScope=e=>!e.c||e.c===S.country;
+const warn=q=>{const w=[];if(old()&&!q.fixed)w.push(old());if(!q.my&&!q.custom&&q.d&&days(q.d)>5)w.push('Warning: this rate is dated '+q.d+' ('+days(q.d)+' days ago).');return w.join(' ')};
+const th=()=>{document.documentElement.dataset.t=S.theme==='dark'||(S.theme==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches)?'dark':'light'};
+function status(){const on=navigator.onLine,h=R?(Date.now()-R.at)/36e5:0,w=R?new Date(R.at).toLocaleString([],{dateStyle:'medium',timeStyle:'short'}):'',e=$('#st');
+let t=on?'Online: ':'Offline: ';
+t+=!R?'no rates saved yet':R.s?'built-in starter rates from '+w+' (10 currencies)'+(on&&err?', update failed ('+err+')':''):(on&&!err&&h<1?'rates fetched '+w+(via?' (backup source)':''):(on&&err?'update failed ('+err+'), ':'')+'using saved rates from '+w);
+if(R&&h>36)t+=' (outdated)';
+e.textContent=t;e.className=R&&h>36?'am':''}
+let lastTry=0,BIG=[],via='';
+async function get(u){const ac=new AbortController(),t=setTimeout(()=>ac.abort(),10000);try{const r=await fetch(u,{signal:ac.signal});if(r.status===429)throw new Error('too many requests, try later');if(!r.ok)throw new Error('server error '+r.status);return await r.json()}finally{clearTimeout(t)}}
+const em=e=>e.name==='AbortError'?'timed out':e.message;
+async function refresh(){lastTry=Date.now();if(!navigator.onLine){status();return}
+let m=null,v='';
+try{const a=await get('https://api.frankfurter.dev/v2/rates?base=usd');m={};for(const x of a)if(x.rate>0&&/^[A-Z]{3}$/.test(x.quote))m[x.quote]={r:x.rate,d:x.date,s:'f'};if(Object.keys(m).length<20)throw new Error('unexpected data');err=''}
+catch(e1){m=null;try{const j=await get('https://open.er-api.com/v6/latest/USD');if(j.result!=='success'||!j.rates)throw new Error('unexpected data');const dd=new Date(j.time_last_update_unix*1000).toISOString().slice(0,10),gone=(G.x||FX).map(e=>e.o);m=Object.assign({},R&&R.rates);for(const[c,x]of Object.entries(j.rates))if(x>0&&/^[A-Z]{3}$/.test(c)&&c!=='USD'&&!gone.includes(c))m[c]={r:x,d:dd,s:'b'};v='b';err=''}catch(e2){err=em(e1);m=null}}
+if(m){BIG=[];const o=R&&R.rates||{};for(const c in m){const p=o[c];if(p&&p.r>0&&m[c].d!==p.d){const ch=m[c].r/p.r-1;if(Math.abs(ch)>.15)BIG.push(c+' '+(ch>0?'+':'')+Math.round(ch*100)+'%')}}
+GONE=!!(R&&R.rates[S.main]&&!m[S.main]&&S.main!=='USD');via=v;R={at:Date.now(),rates:m};sv('cw_rates',R)}
+status();fill();calc();conv();list();notice()}
+function fill(){$('#cl').innerHTML=codes().map(c=>'<option value="'+c+'">'+name(c).replace(/[<&"]/g,'')+'</option>').join('')}
+function bind(id,v,cb){const el=$(id);el.dataset.v=v;el.value=v;el.onfocus=()=>el.select();el.onchange=()=>{const x=el.value.trim().toUpperCase();if(codes().includes(x))el.dataset.v=x;el.value=el.dataset.v;cb&&cb()}}
+function chips(box,id,cb){const b=$(box);b.innerHTML='';[...new Set([S.main,...(S.usd?['USD']:[])])].forEach(c=>{const e=document.createElement('button');e.textContent=c;e.onclick=()=>{$(id).dataset.v=c;$(id).value=c;cb()};b.append(e)})}
+function reset(){bind('#cc',S.main,calc);bind('#pc',S.main,calc);bind('#cf',S.main,conv);bind('#ct',S.main==='USD'?'EUR':'USD',conv);chips('#cch','#cc',calc);chips('#pch','#pc',calc);bind('#mf','USD');bind('#mt',S.main==='USD'?'EUR':S.main);
+$('#qk').innerHTML='';[1,2,5,10,20,50,100].forEach(n=>{const e=document.createElement('button');e.textContent=n;e.onclick=()=>{$('#paid').value=n;calc()};$('#qk').append(e)})}
+function calc(){const c=$('#cc').dataset.v,p=$('#pc').dataset.v,o=$('#res'),cs=$('#cost').value,ps=$('#paid').value;
+if(!cs&&!ps){o.innerHTML='';return}
+const a=toMinor(cs||'0',c),b=toMinor(ps||'0',p);
+if(a===null||b===null){o.innerHTML=d('Enter valid numbers. Decimal places allowed: '+c+' '+dec(c)+', '+p+' '+dec(p)+'.','wr');return}
+let q=null,k=1;
+if(c!==p){q=pair(c,p);if(!q){o.innerHTML=noRate(c,p);return}k=q.k}
+const cost=c===p?a:Math.round(a*k*10**(dec(p)-dec(c))),ch=b-cost;let h;
+if(ch<0)h='<div class="till"><div class="big wr" style="color:#ffd0cb!important">Short by '+fmt(-ch,p)+'</div><div class="sm">The customer has not paid enough.</div></div>';
+else{const st=+S.round||1,r=Math.round(ch/st)*st;h='<div class="till"><div class="sm">Change due</div><div class="big">'+fmt(r,p)+'</div>'+(st>1?'<div class="sm">Rounded from '+fmt(ch,p)+'</div>':'')+'</div>'}
+h+=d('Cost '+fmt(a,c)+(q?' = '+fmt(cost,p)+' (1 '+c+' = '+rt(k)+' '+p+')':''));
+if(q){h+=d(src(q));const w=warn(q);if(w)h+=d(w,'am');h+=myBox(c,p)}
+o.innerHTML=h}
+function conv(){const f=$('#cf').dataset.v,t=$('#ct').dataset.v,s=$('#ca').value,o=$('#cr');if(!s){o.innerHTML='';return}
+const a=toMinor(s,f);if(a===null){o.innerHTML=d('Enter a valid amount ('+dec(f)+' decimal places allowed for '+f+').','wr');return}
+const q=f===t?{k:1}:pair(f,t);if(!q){o.innerHTML=noRate(f,t);return}
+o.innerHTML='<div class="till"><div class="big">'+fmt(Math.round(a*q.k*10**(dec(t)-dec(f))),t)+'</div><div class="sm">1 '+f+' = '+rt(q.k)+' '+t+'</div></div>'+(f!==t?d(src(q))+(warn(q)?d(warn(q),'am'):'')+myBox(f,t):'')}
+function list(){const q=$('#q').value.trim().toLowerCase(),m=S.main,o=$('#rl');
+$('#rh').textContent=R?'Rates for 1 '+m+'. Last downloaded '+new Date(R.at).toLocaleString([],{dateStyle:'medium',timeStyle:'short'})+'.':'';
+if(!R){o.innerHTML=d('No rates saved yet. Connect to the internet to download them.','am');return}
+o.innerHTML=codes().filter(c=>c!==m&&!(G.x||FX).some(e=>e.r&&e.o===c)&&(c.toLowerCase().includes(q)||name(c).toLowerCase().includes(q))).map(c=>{const p=pair(m,c);return p?'<div class="rr"><span><b>'+c+'</b><br><span class="sm">'+name(c)+'</span></span><span style="text-align:right">'+rt(p.k)+'<br><span class="sm'+(!p.my&&!p.custom&&p.d&&days(p.d)>5?' am':'')+'">'+(p.my||p.custom?'your rate':p.fixed?'official fixed rate':(p.d||'')+(p.bk?' (backup)':''))+'</span></span></div>':''}).join('')}
+function setUI(){$('#sc').innerHTML='<option value="">Choose your country</option>'+Object.keys(geo()).sort((a,b)=>cname(a).localeCompare(cname(b))).map(k=>'<option value="'+k+'"'+(k===S.country?' selected':'')+'>'+cname(k)+'</option>').join('');
+$('#sm').value=S.main;$('#sm').dataset.v=S.main;$('#su').checked=S.usd;$('#sr').value=MR['USD>'+S.main]?MR['USD>'+S.main].k:'';$('#sd').value=S.round;$('#sh').value=S.theme;cust();
+$('#wl').textContent=first&&!ld('cw_set',null)?'Welcome. Choose your country and we will suggest its currency. You can change everything later.':''}
+function cust(){$('#cw').style.display=$('#sm').value.toUpperCase()!=='USD'?'block':'none';$('#srl').textContent='1 USD = how many '+($('#sm').value.toUpperCase()||'?')+'?'}
+$('#sc').onchange=()=>{const k=$('#sc').value,c=geo()[k];if(c){$('#sm').value=c[0];$('#sm').dataset.v=c[0];$('#su').checked=c.includes('USD')||S.usd;cust();$('#sg').textContent=c.length>1?cname(k)+' also uses '+c.slice(1).join(', ')+'.':''}};
+$('#sm').addEventListener('input',cust);
+$('#save').onclick=()=>{const m=$('#sm').value.trim().toUpperCase(),g=$('#sg'),cu=$('#sr').value.trim().replace(',','.'),v=parseFloat(cu);
+if(cu&&!(v>0)){g.textContent='Your own rate must be a number above 0, or leave it empty.';return}
+if(!(codes().includes(m)||(/^[A-Z]{3}$/.test(m)&&(v>0||!R)))){g.textContent='Currency "'+m+'" is not in the rate list. If it is brand new, enter your own rate against USD below.';return}
+if(m!=='USD'){if(v>0){delete MR[m+'>USD'];MR['USD>'+m]={k:v,at:Date.now()}}else delete MR['USD>'+m]}
+sv('cw_man',MR);S={main:m,usd:$('#su').checked,round:+$('#sd').value,theme:$('#sh').value,country:$('#sc').value};sv('cw_set',S);th();fill();reset();calc();conv();list();myList();$('#sg').textContent='Saved.';show('change');notice()};
+$('#upd').onclick=()=>{$('#sg').textContent=navigator.onLine?'Updating…':'You are offline. Saved rates stay in use.';refresh().then(()=>{if(navigator.onLine)$('#sg').textContent=err?'Update failed: '+err:'Rates updated.'})};
+$('#calc').onclick=calc;$('#cmr').onclick=()=>{MR={};sv('cw_man',MR);calc();conv();list();$('#sg').textContent='Typed rates cleared.'};['cost','paid'].forEach(i=>$('#'+i).oninput=calc);$('#ca').oninput=conv;$('#q').oninput=list;
+$('#clr').onclick=()=>{$('#cost').value='';$('#paid').value='';$('#res').innerHTML=''};
+$('#sw').onclick=()=>{const f=$('#cf'),t=$('#ct'),x=f.dataset.v;f.dataset.v=f.value=t.dataset.v;t.dataset.v=t.value=x;conv()};
+function myList(){const ks=Object.keys(MR);$('#ml').innerHTML=ks.length?ks.map(k=>{const[a,b]=k.split('>');return'<div class="rr"><span><b>1 '+a+' = '+rt(MR[k].k)+' '+b+'</b><br><span class="sm">Set '+dt(MR[k].at)+'</span></span><button onclick="delMy(\''+k+'\')">Delete</button></div>'}).join(''):d('No rates of your own yet. Add one below, for example 1 USD = 40 ZWG.')}
+function delMy(k){delete MR[k];sv('cw_man',MR);myList();calc();conv();list()}
+$('#msave').onclick=()=>{const a=$('#mf').dataset.v,b=$('#mt').dataset.v,v=parseFloat($('#mr').value.replace(',','.')),g=$('#mg');if(a===b){g.textContent='Pick two different currencies.';return}if(!(v>0&&isFinite(v))){g.textContent='Enter a rate above 0.';return}delete MR[b+'>'+a];MR[a+'>'+b]={k:v,at:Date.now()};sv('cw_man',MR);$('#mr').value='';g.textContent='Saved: 1 '+a+' = '+rt(v)+' '+b;myList();calc();conv();list()};
+const V={change:'Change',conv:'Convert',rates:'Rates',my:'My rates',set:'Settings'};
+$('#nv').innerHTML=Object.entries(V).map(([k,v])=>'<button data-v="'+k+'">'+v+'</button>').join('');
+function show(v){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(v==='rates')list();if(v==='my')myList();if(v==='set')setUI()}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.v));
+addEventListener('online',refresh);addEventListener('offline',status);
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',th);
+th();fill();reset();status();show(first?'set':'change');refresh();loadGeo();notice();
+setInterval(()=>{status();if((!R||R.s||Date.now()-R.at>18e5)&&Date.now()-lastTry>3e5)refresh()},6e4);
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
